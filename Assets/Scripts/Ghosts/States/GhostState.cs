@@ -1,8 +1,8 @@
-public abstract class GhostState
+using System;
+
+public interface iGhostState
 {
-    GhostControler _ghostCont { get; set; }
-
-    public virtual void Init(GhostControler ghost) { }
-
-    public abstract void Run();
+    public GhostControler _ghostCont { get; set; }
+    public void Init(GhostControler ghost);
+    public void Run();
 }
