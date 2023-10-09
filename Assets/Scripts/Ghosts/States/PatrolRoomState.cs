@@ -9,6 +9,7 @@ public class PatrolRoomState : iGhostState
     private float resetStT;
     public void Init(GhostControler ghost)
     {
+        _ghostCont = ghost;
         resetStT = standTime;
         _ghostCont.MoveTo(_ghostCont.currentRoom.patrolPoints[0].position);
 
