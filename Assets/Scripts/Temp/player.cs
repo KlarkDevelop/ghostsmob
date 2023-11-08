@@ -15,7 +15,7 @@ public class player : NetworkBehaviour
     {
         ChekGround();
         ApplayGravity();
-        MouseMove();
+        if (pl_Camera != null) MouseMove();
         Move();
     }
 
@@ -73,6 +73,20 @@ public class player : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (!IsOwner) enabled = false;
+        // _characterControler = GetComponent<CharacterController>();
+        if (!IsOwner)
+        {
+
+            // _characterControler.enabled = false;
+            this.enabled = false;
+            transform.position = new Vector3(0, 1.05f, 0);
+        }
+        else
+        {
+            pl_Camera = Camera.main.transform;
+            pl_Camera.parent = transform;
+            pl_Camera.localPosition = new Vector3(0, 0.74f, 0);
+            transform.position = new Vector3(0, 1.05f, 0); //TODO: delete this line
+        }
     }
 }
