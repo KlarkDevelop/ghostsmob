@@ -11,7 +11,7 @@ public class PatrolRoomState : iGhostState
     {
         _ghostCont = ghost;
         resetStT = standTime;
-        _ghostCont.MoveTo(_ghostCont.currentRoom.patrolPoints[0].position);
+        // _ghostCont.MoveTo();
 
         onStart?.Invoke();
     }
@@ -26,7 +26,7 @@ public class PatrolRoomState : iGhostState
         if (_ghostCont.isArrived)
         {
             standTime -= Time.deltaTime;
-            if (standTime <= 0)
+            if (standTime <= 0 && _ghostCont.currentRoom != null)
             {
                 _ghostCont.MoveTo(_ghostCont.currentRoom.patrolPoints[
                             UnityEngine.Random.Range(0, _ghostCont.currentRoom.patrolPoints.Length)].position);

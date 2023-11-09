@@ -26,8 +26,8 @@ public class GhostControler : NetworkBehaviour
         layerObstacleId = LayerMask.GetMask("Obstacle");
         layerItemsId = LayerMask.GetMask("Item");
 
-        StartCoroutine(CheckRoom());
         StartCoroutine(ChekView());
+        StartCoroutine(CheckRoom());
 
         currentState.Init(this);
 
@@ -36,7 +36,7 @@ public class GhostControler : NetworkBehaviour
 
     private void Update()
     {
-        // if (Input.GetKeyDown(KeyCode.Space)) ChangeState(new HuntState());
+        if (Input.GetKeyDown(KeyCode.F)) ChangeState(new HuntState());
         currentState.Run();
         if (Input.GetKeyDown(KeyCode.Space)) TryDoAction();
         isArrived = Ai.remainingDistance <= Ai.stoppingDistance;
@@ -69,14 +69,18 @@ public class GhostControler : NetworkBehaviour
 
             if (col.Length != 0 && col[0].gameObject.TryGetComponent<Room>(out Room foundedRoom))
             {
-                if (currentRoom.roomId != foundedRoom.roomId)
+                if (currentRoom == null || currentRoom != foundedRoom)
                 {
                     currentRoom = foundedRoom;
                     Debug.Log($"Ghost moved to another room! Now it in room: {currentRoom}");
                 }
             }
+            else
+            {
+                currentRoom = null;
+            }
 
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.5f);
         }
     }
 
@@ -96,7 +100,7 @@ public class GhostControler : NetworkBehaviour
 
     private void TryDoAction()
     {
-        Collider[] col = Physics.OverlapSphere(transform.position, actionRange, layerItemsId); //TODO: бросаться не в ближайших а в тех кто находитстья в той же комнате
+        Collider[] col = Physics.OverlapSphere(transform.position, actionRange, layerItemsId);
         if (col.Length != 0)
         {
             GameObject item = col[UnityEngine.Random.Range(0, col.Length)].gameObject;
@@ -110,7 +114,7 @@ public class GhostControler : NetworkBehaviour
     public void DoAction(GameObject obj)
     {
         Rigidbody item = obj.GetComponent<Rigidbody>();
-        Collider[] players = Physics.OverlapSphere(transform.position, viewDist, layerPlayersId);
+        Collider[] players = Physics.OverlapSphere(transform.position, viewDist, layerPlayersId); //TODO: бросаться не в ближайших а в тех кто находитстья в той же комнате
 
         Vector3 throwVector = new Vector3();
         if (UnityEngine.Random.Range(0f, 1) <= agrasiveness && players.Length != 0)
@@ -214,6 +218,9 @@ public class GhostControler : NetworkBehaviour
 
     private void DisableControler()
     {
-        if (!IsOwner) enabled = false;
+        if (!IsOwner)
+        {
+            enabled = false;
+        }
     }
 }

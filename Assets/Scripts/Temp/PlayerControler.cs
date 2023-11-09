@@ -1,22 +1,36 @@
 using UnityEngine;
 using Unity.Netcode;
-public class player : NetworkBehaviour
+using System.Collections;
+public class PlayerControler : NetworkBehaviour
 {
     [SerializeField] private Animator _animator;
     private CharacterController _characterControler;
+    public int inGameId;
+    public Room currentRoom;
+    private bool isLoaded = false;
 
     private void Start()
     {
         _characterControler = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
+
+        PlayersManager.Singleton.AddPlayer(this);
+    }
+
+    public override void OnDestroy()
+    {
+        PlayersManager.Singleton.RemovePlayer(this);
     }
 
     private void Update()
     {
-        ChekGround();
-        ApplayGravity();
-        if (pl_Camera != null) MouseMove();
-        Move();
+        if (IsOwner && isLoaded)
+        {
+            ChekGround();
+            MouseMove();
+            Move();
+            ApplayGravity();
+        }
     }
 
     public float speed = 10f;
@@ -73,20 +87,37 @@ public class player : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        // _characterControler = GetComponent<CharacterController>();
         if (!IsOwner)
         {
-
-            // _characterControler.enabled = false;
-            this.enabled = false;
             transform.position = new Vector3(0, 1.05f, 0);
         }
         else
         {
-            pl_Camera = Camera.main.transform;
-            pl_Camera.parent = transform;
-            pl_Camera.localPosition = new Vector3(0, 0.74f, 0);
-            transform.position = new Vector3(0, 1.05f, 0); //TODO: delete this line
+            StartCoroutine(LoadPlayer());
+        }
+    }
+
+    private IEnumerator LoadPlayer()
+    {
+        pl_Camera = Camera.main.transform;
+        pl_Camera.parent = transform;
+        pl_Camera.localPosition = new Vector3(0, 0.74f, 0);
+        transform.position = new Vector3(0, 1f, 0); //TODO: delete this line
+
+        yield return new WaitForSeconds(1);
+
+        isLoaded = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent<Room>(out Room foundedRoom))
+        {
+            if (currentRoom == null || currentRoom != foundedRoom)
+            {
+                currentRoom = foundedRoom;
+                Debug.Log($"Player {inGameId} moved to room: {currentRoom}");
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ public class HuntState : iGhostState
     {
         if (_ghostCont.nearestTarget != null)
         {
-            _ghostCont.MoveTo(_ghostCont.nearestTarget.transform.position);
+            _ghostCont.MoveTo(_ghostCont.nearestTarget.transform.position); //TODO: запоминание последней видимой точки игрока
         }
         else
         {
