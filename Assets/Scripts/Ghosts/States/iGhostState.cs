@@ -1,5 +1,3 @@
-using System;
-
 public interface iGhostState
 {
     public GhostControler _ghostCont { get; set; }

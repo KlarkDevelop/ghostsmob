@@ -4297,17 +4297,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d56fd02310ec5543b006b433cf162a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ghost: {fileID: 11400000, guid: b7c1ea50e6559c841a05c8c1ee3770d6, type: 2}
   currentRoom: {fileID: 0}
   isArrived: 0
   allRooms: {fileID: 709842496}
-  chance: 0
-  agrasiveness: 0.5
-  actionsDelay: 30000
-  inCompanyFactor: 0
-  elctricObjectFactor: 1
-  playersObjectFactor: 1
-  actionRange: 4.02
-  throwForce: 5
+  EMPSource: {fileID: 0}
   showActionGizmos: 0
   showVisionGizmos: 0
   viewDist: 6.16

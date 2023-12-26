@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.AI;
 
 public class GhostControler : NetworkBehaviour
 {
     private iGhostState currentState = new PatrolRoomState();
     private NavMeshAgent Ai;
-
+    public GhostType ghost;
     public Room currentRoom;
     private int layerRoomsId;
     private int layerItemsId;
@@ -84,58 +85,58 @@ public class GhostControler : NetworkBehaviour
         }
     }
 
-    [Header("Actions")]
-    //Это будет в особеностях призрака
-    [Range(0, 1f)]
-    public float chance = 0.5f;
-    public float agrasiveness = 1;
-    public float actionsDelay = 30000;
-    public float inCompanyFactor = 1;
-    public float elctricObjectFactor = 1;
-    public float playersObjectFactor = 1;
-    //Это будет в особеностях призрака
-
-    public float actionRange = 5;
-    public float throwForce = 1;
-
     private void TryDoAction()
     {
-        Collider[] col = Physics.OverlapSphere(transform.position, actionRange, layerItemsId);
+        Collider[] col = Physics.OverlapSphere(transform.position, ghost.actionRange, layerItemsId);
         if (col.Length != 0)
         {
             GameObject item = col[UnityEngine.Random.Range(0, col.Length)].gameObject;
 
-            //TODO: проверка на то какой это предмет для высчета шанса взаимодействия
+            //TODO: проверка на то какой это предмет для высчета шанса взаимодействия (передача в DoAction переменной с типом класса для роботы конеретной перегрузки)
 
             DoAction(item);
         }
     }
 
-    public void DoAction(GameObject obj)
+    [SerializeField]
+    private GameObject EMPSource;
+    public static UnityEvent<EMPSignalSource> onAction = new UnityEvent<EMPSignalSource>();
+    public void DoAction(GameObject obj) //TODO: разделить логику в зависимости от того что это за предмет (перегрузкой метода)
     {
         Rigidbody item = obj.GetComponent<Rigidbody>();
-        Collider[] players = Physics.OverlapSphere(transform.position, viewDist, layerPlayersId); //TODO: бросаться не в ближайших а в тех кто находитстья в той же комнате
+
+        List<Transform> players = new List<Transform>();
+
+        foreach (PlayerControler player in PlayersManager.Singleton.players)
+        {
+            if (currentRoom == player.currentRoom)
+            {
+                players.Add(player.transform);
+            }
+        }
 
         Vector3 throwVector = new Vector3();
-        if (UnityEngine.Random.Range(0f, 1) <= agrasiveness && players.Length != 0)
+        if (UnityEngine.Random.Range(0f, 1) <= ghost.agrasiveness && players.Count != 0)
         {
-            Collider nearestPlayer = players[0];
-            foreach (Collider anotherPlayer in players)
+            Transform nearestPlayer = players[0];
+            foreach (Transform anotherPlayer in players)
             {
-                if (Vector3.Distance(nearestPlayer.transform.position, transform.position) > Vector3.Distance(anotherPlayer.transform.position, transform.position))
+                if (Vector3.Distance(nearestPlayer.position, transform.position) > Vector3.Distance(anotherPlayer.position, transform.position))
                 {
                     nearestPlayer = anotherPlayer;
                 }
             }
-            throwVector = (nearestPlayer.transform.position - item.transform.position).normalized;
+            throwVector = (nearestPlayer.position - item.transform.position).normalized;
         }
         else
         {
-            throwVector = new Vector3(UnityEngine.Random.Range(-1f, 1), UnityEngine.Random.Range(-1f, 1), UnityEngine.Random.Range(0f, 1));
+            throwVector = new Vector3(UnityEngine.Random.Range(-1f, 1), UnityEngine.Random.Range(0f, 1), UnityEngine.Random.Range(-1f, 1));
         }
-        Vector3 throwDirection = throwVector * throwForce;
+        Vector3 throwDirection = throwVector * ghost.throwForce;
 
         item.AddForce(throwDirection, ForceMode.Impulse);
+        EMPSignalSource source = Instantiate(EMPSource, item.transform).GetComponent<EMPSignalSource>();
+        onAction.Invoke(source);
     }
 
     [Header("Vision")]
