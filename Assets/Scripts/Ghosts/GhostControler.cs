@@ -101,7 +101,7 @@ public class GhostControler : NetworkBehaviour
     [SerializeField]
     private GameObject EMPSource;
     public static UnityEvent<EMPSignalSource> onAction = new UnityEvent<EMPSignalSource>();
-    public void DoAction(GameObject obj) //TODO: разделить логику в зависимости от того что это за предмет (перегрузкой метода)
+    public void DoAction(GameObject obj) //TODO: разделить логику в зависимости от того что это за предмет (перегрузкой метода) и зарефакторить этот метод
     {
         Rigidbody item = obj.GetComponent<Rigidbody>();
 
@@ -135,7 +135,15 @@ public class GhostControler : NetworkBehaviour
         Vector3 throwDirection = throwVector * ghost.throwForce;
 
         item.AddForce(throwDirection, ForceMode.Impulse);
-        EMPSignalSource source = Instantiate(EMPSource, item.transform).GetComponent<EMPSignalSource>();
+        EMPSignalSource source = new EMPSignalSource();
+        if (item.TryGetComponent<EMPSignalSource>(out source))
+        {
+            source.UpdateTimer();
+        }
+        else
+        {
+            source = Instantiate(EMPSource, item.transform).GetComponent<EMPSignalSource>();
+        }
         onAction.Invoke(source);
     }
 
