@@ -12,14 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f20e117cd27fcdf44a761fbf55bc0415, type: 3}
   m_Name: TestGhost
   m_EditorClassIdentifier: 
-  typeName: GhostName
-  chance: 0.5
-  agrasiveness: 1
-  actionsDelay: 30000
-  inCompanyFactor: 1
-  elctricObjectFactor: 1
-  playersObjectFactor: 1
-  actionRange: 5
-  throwForce: 5
+  properety: {fileID: 11400000, guid: baa6a8ef06f3b0e4dbf3b369970411bd, type: 2}
   evidences: []
   peculiarities: []

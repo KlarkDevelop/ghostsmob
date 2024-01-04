@@ -14,7 +14,7 @@ TagManager:
   - Room
   - Players
   - Obstacle
-  - Item
+  - interactableObject
   - EMPSource
   - 
   - 

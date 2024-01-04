@@ -10,7 +10,9 @@ public class GhostControler : NetworkBehaviour
     private iGhostState currentState = new PatrolRoomState();
     private NavMeshAgent Ai;
     public GhostType ghost;
+    [HideInInspector] public GhostPropereties _ghostPropereties;
     public Room currentRoom;
+    public Room favoriteRoom;
     private int layerRoomsId;
     private int layerItemsId;
 
@@ -18,19 +20,28 @@ public class GhostControler : NetworkBehaviour
 
     [SerializeField] private RoomsManager allRooms;
 
-    private void Start()
+    private void Awake()
     {
         Ai = GetComponent<NavMeshAgent>();
+        if (favoriteRoom == null) ChooseFavoriteRoom();
+        ghost.Init();
+        _ghostPropereties = ghost.GetGhostPropereties();
+        currentState.Init(this);
+    }
 
+    private void Start()
+    {
         layerRoomsId = LayerMask.GetMask("Room");
         layerPlayersId = LayerMask.GetMask("Players");
         layerObstacleId = LayerMask.GetMask("Obstacle");
         layerItemsId = LayerMask.GetMask("Item");
 
+        tempSpeed = _ghostPropereties.tempSpeed * allRooms.tempGlobalSpeed;
+
+
+
         StartCoroutine(ChekView());
         StartCoroutine(CheckRoom());
-
-        currentState.Init(this);
 
         NetworkManager.OnClientStarted += DisableControler;
     }
@@ -41,6 +52,9 @@ public class GhostControler : NetworkBehaviour
         currentState.Run();
         if (Input.GetKeyDown(KeyCode.Space)) TryDoAction();
         isArrived = Ai.remainingDistance <= Ai.stoppingDistance;
+
+        InfluenceOnTemperature();
+        InfluenceOnTemperatureInFavoriteRoom();
     }
 
     public void MoveTo(Vector3 pos)
@@ -60,6 +74,11 @@ public class GhostControler : NetworkBehaviour
     {
         currentState = state;
         currentState.Init(this);
+    }
+
+    private void ChooseFavoriteRoom()
+    {
+        favoriteRoom = allRooms.rooms[Random.Range(0, allRooms.rooms.Length)];
     }
 
     IEnumerator CheckRoom()
@@ -87,7 +106,7 @@ public class GhostControler : NetworkBehaviour
 
     private void TryDoAction()
     {
-        Collider[] col = Physics.OverlapSphere(transform.position, ghost.actionRange, layerItemsId);
+        Collider[] col = Physics.OverlapSphere(transform.position, _ghostPropereties.actionRange, layerItemsId);
         if (col.Length != 0)
         {
             GameObject item = col[UnityEngine.Random.Range(0, col.Length)].gameObject;
@@ -116,7 +135,7 @@ public class GhostControler : NetworkBehaviour
         }
 
         Vector3 throwVector = new Vector3();
-        if (UnityEngine.Random.Range(0f, 1) <= ghost.agrasiveness && players.Count != 0)
+        if (UnityEngine.Random.Range(0f, 1) <= _ghostPropereties.agrasiveness && players.Count != 0)
         {
             Transform nearestPlayer = players[0];
             foreach (Transform anotherPlayer in players)
@@ -132,7 +151,7 @@ public class GhostControler : NetworkBehaviour
         {
             throwVector = new Vector3(UnityEngine.Random.Range(-1f, 1), UnityEngine.Random.Range(0f, 1), UnityEngine.Random.Range(-1f, 1));
         }
-        Vector3 throwDirection = throwVector * ghost.throwForce;
+        Vector3 throwDirection = throwVector * _ghostPropereties.throwForce;
 
         item.AddForce(throwDirection, ForceMode.Impulse);
         EMPSignalSource source = new EMPSignalSource();
@@ -145,6 +164,24 @@ public class GhostControler : NetworkBehaviour
             source = Instantiate(EMPSource, item.transform).GetComponent<EMPSignalSource>();
         }
         onAction.Invoke(source);
+    }
+
+    private float tempSpeed;
+    private void InfluenceOnTemperature()
+    {
+        if (currentRoom != favoriteRoom)
+        {
+            currentRoom.ChangeTemperature(_ghostPropereties.minTempInCurrentRoom, tempSpeed);
+        }
+        else
+        {
+            currentRoom.ChangeTemperature(_ghostPropereties.minTempInFavoriteRoom, tempSpeed * 2);
+        }
+    }
+
+    private void InfluenceOnTemperatureInFavoriteRoom()
+    {
+        favoriteRoom.ChangeTemperature(_ghostPropereties.minTempInCurrentRoom, tempSpeed);
     }
 
     [Header("Vision")]

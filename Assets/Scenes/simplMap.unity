@@ -1260,6 +1260,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rooms: []
+  maxTemperature: 20
+  minTemperature: 8
+  isElectricityOn: 1
+  tempGlobalSpeed: 0.01
+  tempChangingSpeed: 1
 --- !u!1 &717423715
 GameObject:
   m_ObjectHideFlags: 0
@@ -1574,6 +1579,7 @@ MonoBehaviour:
   - {fileID: 1765677888}
   - {fileID: 2054170435}
   - {fileID: 717423716}
+  temperature: 10
 --- !u!1 &969765967
 GameObject:
   m_ObjectHideFlags: 0
@@ -4400,7 +4406,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghost: {fileID: 11400000, guid: b7c1ea50e6559c841a05c8c1ee3770d6, type: 2}
+  _ghostPropereties: {fileID: 0}
   currentRoom: {fileID: 0}
+  favoriteRoom: {fileID: 0}
   isArrived: 0
   allRooms: {fileID: 709842496}
   EMPSource: {fileID: 7562711965318941367, guid: ab03a7a2cadb2c947a48df37c4777f2f, type: 3}
@@ -5599,6 +5607,7 @@ MonoBehaviour:
   - {fileID: 952652507}
   - {fileID: 1316234064}
   - {fileID: 135123801}
+  temperature: 10
 --- !u!4 &2086256727
 Transform:
   m_ObjectHideFlags: 0

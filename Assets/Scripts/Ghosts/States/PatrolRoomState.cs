@@ -7,11 +7,12 @@ public class PatrolRoomState : iGhostState
     public GhostControler _ghostCont { get; set; }
     private float standTime = 2f;
     private float resetStT;
+    private Room patrolingRoom;
     public void Init(GhostControler ghost)
     {
         _ghostCont = ghost;
         resetStT = standTime;
-        // _ghostCont.MoveTo();
+        patrolingRoom = _ghostCont.favoriteRoom;
 
         onStart?.Invoke();
     }
@@ -26,10 +27,10 @@ public class PatrolRoomState : iGhostState
         if (_ghostCont.isArrived)
         {
             standTime -= Time.deltaTime;
-            if (standTime <= 0 && _ghostCont.currentRoom != null)
+            if (standTime <= 0)
             {
-                _ghostCont.MoveTo(_ghostCont.currentRoom.patrolPoints[
-                            UnityEngine.Random.Range(0, _ghostCont.currentRoom.patrolPoints.Length)].position);
+                _ghostCont.MoveTo(patrolingRoom.patrolPoints[
+                            UnityEngine.Random.Range(0, patrolingRoom.patrolPoints.Length)].position);
                 standTime = resetStT;
             }
         }

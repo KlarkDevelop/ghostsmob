@@ -30,7 +30,7 @@ public class DebugGhostControler : Editor
         if (fov.showActionGizmos)
         {
             Handles.color = Color.white;
-            Handles.DrawWireArc(fov.transform.position, Vector3.up, Vector3.forward, 360, fov.ghost.actionRange);
+            Handles.DrawWireArc(fov.transform.position, Vector3.up, Vector3.forward, 360, fov._ghostPropereties.actionRange);
         }
     }
 
