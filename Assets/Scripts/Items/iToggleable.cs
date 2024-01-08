@@ -1,6 +1,4 @@
 public interface iToggleable
 {
-
-    public void Toggl();
-
+    void Toggl();
 }

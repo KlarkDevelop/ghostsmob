@@ -24,6 +24,7 @@ public class GhostControler : NetworkBehaviour
     {
         Ai = GetComponent<NavMeshAgent>();
         if (favoriteRoom == null) ChooseFavoriteRoom();
+        GetCurrentRoom();
         ghost.Init();
         _ghostPropereties = ghost.GetGhostPropereties();
         currentState.Init(this);
@@ -37,8 +38,6 @@ public class GhostControler : NetworkBehaviour
         layerItemsId = LayerMask.GetMask("Item");
 
         tempSpeed = _ghostPropereties.tempSpeed * allRooms.tempGlobalSpeed;
-
-
 
         StartCoroutine(ChekView());
         StartCoroutine(CheckRoom());
@@ -85,22 +84,23 @@ public class GhostControler : NetworkBehaviour
     {
         while (true)
         {
-            Collider[] col = Physics.OverlapSphere(transform.position, 0.1f, layerRoomsId);
-
-            if (col.Length != 0 && col[0].gameObject.TryGetComponent<Room>(out Room foundedRoom))
-            {
-                if (currentRoom == null || currentRoom != foundedRoom)
-                {
-                    currentRoom = foundedRoom;
-                    Debug.Log($"Ghost moved to another room! Now it in room: {currentRoom}");
-                }
-            }
-            else
-            {
-                currentRoom = null;
-            }
+            GetCurrentRoom();
 
             yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    private void GetCurrentRoom()
+    {
+        Collider[] col = Physics.OverlapSphere(transform.position, 0.1f, layerRoomsId);
+
+        if (col.Length != 0 && col[0].gameObject.TryGetComponent<Room>(out Room foundedRoom))
+        {
+            if (currentRoom == null || currentRoom != foundedRoom)
+            {
+                currentRoom = foundedRoom;
+                Debug.Log($"Ghost moved to another room! Now it in room: {currentRoom}");
+            }
         }
     }
 
