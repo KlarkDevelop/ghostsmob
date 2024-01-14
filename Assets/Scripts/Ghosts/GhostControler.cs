@@ -35,7 +35,7 @@ public class GhostControler : NetworkBehaviour
         layerRoomsId = LayerMask.GetMask("Room");
         layerPlayersId = LayerMask.GetMask("Players");
         layerObstacleId = LayerMask.GetMask("Obstacle");
-        layerItemsId = LayerMask.GetMask("Item");
+        layerItemsId = LayerMask.GetMask("interactableObject");
 
         tempSpeed = _ghostPropereties.tempSpeed * allRooms.tempGlobalSpeed;
 
@@ -154,7 +154,7 @@ public class GhostControler : NetworkBehaviour
         Vector3 throwDirection = throwVector * _ghostPropereties.throwForce;
 
         item.AddForce(throwDirection, ForceMode.Impulse);
-        EMPSignalSource source = new EMPSignalSource();
+        EMPSignalSource source;
         if (item.TryGetComponent<EMPSignalSource>(out source))
         {
             source.UpdateTimer();

@@ -50,6 +50,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 6007762889471891544}
+  inGameId: 0
+  currentRoom: {fileID: 0}
+  aimDistance: 5
+  interactableObjectsMask:
+    serializedVersion: 2
+    m_Bits: 512
   speed: 5
   pl_Camera: {fileID: 0}
   sensitivity: 140

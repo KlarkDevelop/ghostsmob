@@ -9,17 +9,46 @@ public class PlayerControler : NetworkBehaviour
     public Room currentRoom;
     private bool isLoaded = false;
 
+    [SerializeField] private float aimDistance = 2;
+    private int interactableObjectsMaskId;
+    private void Awake()
+    {
+        PlayersManager.Singleton.AddPlayer(this);
+    }
     private void Start()
     {
         _characterControler = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
-
-        PlayersManager.Singleton.AddPlayer(this);
     }
 
     public override void OnDestroy()
     {
         PlayersManager.Singleton.RemovePlayer(this);
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+        {
+            transform.position = new Vector3(0, 1.05f, 0);
+        }
+        else
+        {
+            StartCoroutine(LoadPlayer());
+        }
+    }
+
+    private IEnumerator LoadPlayer()
+    {
+        pl_Camera = Camera.main;
+        pl_Camera.transform.parent = transform;
+        pl_Camera.transform.localPosition = new Vector3(0, 0.74f, 0);
+        transform.position = new Vector3(0, 1f, 0); //TODO: delete this line
+        screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+        interactableObjectsMaskId = LayerMask.NameToLayer("interactableObject");
+        yield return new WaitForSeconds(1);
+
+        isLoaded = true;
     }
 
     private void Update()
@@ -30,7 +59,25 @@ public class PlayerControler : NetworkBehaviour
             MouseMove();
             Move();
             ApplayGravity();
+            objectInFocus = GetObjectInFocus();
         }
+    }
+
+    private Vector3 screenCenter;
+    private GameObject objectInFocus;
+    private GameObject GetObjectInFocus()
+    {
+        RaycastHit hit;
+        GameObject objInFocus = null;
+        Ray aimRay = pl_Camera.ScreenPointToRay(screenCenter);
+        // Debug.DrawRay(aimRay.origin, aimRay.direction, Color.red);
+
+        if (Physics.Raycast(aimRay, out hit, aimDistance))
+        {
+            if (hit.collider.gameObject.layer == interactableObjectsMaskId) objInFocus = hit.collider.gameObject;
+        }
+
+        return objInFocus;
     }
 
     public float speed = 10f;
@@ -45,7 +92,7 @@ public class PlayerControler : NetworkBehaviour
         _animator.SetFloat("Speed", movingV.magnitude);
     }
 
-    [SerializeField] private Transform pl_Camera;
+    [SerializeField] private Camera pl_Camera;
     public float sensitivity = 100f;
     private float xRotation;
     private void MouseMove()
@@ -56,7 +103,7 @@ public class PlayerControler : NetworkBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        pl_Camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        pl_Camera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);
 
     }
@@ -83,30 +130,6 @@ public class PlayerControler : NetworkBehaviour
     private void ChekGround()
     {
         isGrounded = Physics.CheckSphere(groundChaker.position, chkerDistance, groundMask);
-    }
-
-    public override void OnNetworkSpawn()
-    {
-        if (!IsOwner)
-        {
-            transform.position = new Vector3(0, 1.05f, 0);
-        }
-        else
-        {
-            StartCoroutine(LoadPlayer());
-        }
-    }
-
-    private IEnumerator LoadPlayer()
-    {
-        pl_Camera = Camera.main.transform;
-        pl_Camera.parent = transform;
-        pl_Camera.localPosition = new Vector3(0, 0.74f, 0);
-        transform.position = new Vector3(0, 1f, 0); //TODO: delete this line
-
-        yield return new WaitForSeconds(1);
-
-        isLoaded = true;
     }
 
     private void OnTriggerEnter(Collider other)
