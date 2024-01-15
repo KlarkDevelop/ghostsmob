@@ -47,7 +47,7 @@ public class GhostControler : NetworkBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F)) ChangeState(new HuntState());
+        // if (Input.GetKeyDown(KeyCode.F)) ChangeState(new HuntState());
         currentState.Run();
         if (Input.GetKeyDown(KeyCode.Space)) TryDoAction();
         isArrived = Ai.remainingDistance <= Ai.stoppingDistance;

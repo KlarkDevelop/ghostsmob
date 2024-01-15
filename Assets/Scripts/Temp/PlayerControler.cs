@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
+using System.Collections.Generic;
 public class PlayerControler : NetworkBehaviour
 {
     [SerializeField] private Animator _animator;
@@ -40,10 +41,10 @@ public class PlayerControler : NetworkBehaviour
 
     private IEnumerator LoadPlayer()
     {
-        pl_Camera = Camera.main;
-        pl_Camera.transform.parent = transform;
-        pl_Camera.transform.localPosition = new Vector3(0, 0.74f, 0);
-        transform.position = new Vector3(0, 1f, 0); //TODO: delete this line
+        // pl_Camera = Camera.main;
+        // pl_Camera.transform.parent = transform;
+        // pl_Camera.transform.localPosition = new Vector3(0, 0.74f, 0);
+        transform.position = new Vector3(0, 1f, 0); //TODO: delete this lines
         screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
         interactableObjectsMaskId = LayerMask.NameToLayer("interactableObject");
         yield return new WaitForSeconds(1);
@@ -59,7 +60,84 @@ public class PlayerControler : NetworkBehaviour
             MouseMove();
             Move();
             ApplayGravity();
+
             objectInFocus = GetObjectInFocus();
+            if (Input.GetKeyDown(KeyCode.E) && objectInFocus != null) PickUpObject(objectInFocus);
+            if (Input.GetKeyDown(KeyCode.Q) && inventory.Count != 0) SwitchItemsInInventory();
+            if (Input.GetKeyDown(KeyCode.F)) DropItemInHand();
+            if (Input.GetKeyDown(KeyCode.Mouse1) && itemInHand != null) TogglObject(itemInHand);
+            if (Input.GetKeyDown(KeyCode.Mouse0) && objectInFocus != null) TogglObject(objectInFocus);
+        }
+    }
+
+    private void TogglObject(GameObject obj)
+    {
+        if (obj.TryGetComponent<iToggleable>(out iToggleable item)) item.Toggl();
+    }
+
+    [SerializeField] private float dropForce;
+    private void DropItemInHand()
+    {
+        if (itemInHand != null)
+        {
+            inventory.Remove(itemInHand);
+            itemInHand.transform.parent = null;
+            if (itemInHand.TryGetComponent<Rigidbody>(out Rigidbody rg))
+            {
+                rg.isKinematic = false;
+                rg.AddForce(pl_Camera.transform.forward * dropForce, ForceMode.Impulse);
+            }
+            itemInHand = null;
+        }
+    }
+
+    private int currentSlot = 0;
+    private void SwitchItemsInInventory()
+    {
+        if (maxInventoryItems == 1) return;
+
+        if (currentSlot < maxInventoryItems - 1) currentSlot++;
+        else currentSlot = 0;
+
+        if (itemInHand != null)
+        {
+            itemInHand.SetActive(false);
+        }
+
+        if (currentSlot < inventory.Count)
+        {
+            itemInHand = inventory[currentSlot];
+            itemInHand.SetActive(true);
+        }
+        else
+        {
+            itemInHand = null;
+        }
+    }
+
+    [SerializeField] private int maxInventoryItems;
+    private List<GameObject> inventory = new List<GameObject>();
+    private GameObject itemInHand;
+    [SerializeField] private Transform itemsPositionPoint;
+    private void PickUpObject(GameObject obj)
+    {
+        if (inventory.Count < maxInventoryItems)
+        {
+            if (obj.TryGetComponent<Rigidbody>(out Rigidbody rg))
+            {
+                rg.isKinematic = true;
+            }
+            obj.transform.parent = itemsPositionPoint;
+            obj.transform.SetLocalPositionAndRotation(Vector3.zero, new Quaternion(0, 0, 0, 0));
+            inventory.Add(obj);
+            if (itemInHand == null)
+            {
+                itemInHand = obj;
+            }
+            else
+            {
+                obj.SetActive(false);
+            }
         }
     }
 
