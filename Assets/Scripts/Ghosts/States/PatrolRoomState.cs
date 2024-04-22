@@ -4,15 +4,13 @@ using UnityEngine;
 public class PatrolRoomState : iGhostState
 {
     public static event Action onStart;
-    public GhostControler _ghostCont { get; set; }
+    public Ghost _ghost { get; set; }
     private float standTime = 2f;
     private float resetStT;
-    private Room patrolingRoom;
-    public void Init(GhostControler ghost)
+    public void Init(Ghost ghost)
     {
-        _ghostCont = ghost;
+        _ghost = ghost;
         resetStT = standTime;
-        patrolingRoom = _ghostCont.favoriteRoom;
 
         onStart?.Invoke();
     }
@@ -24,13 +22,13 @@ public class PatrolRoomState : iGhostState
 
     private void PatrolMove()
     {
-        if (_ghostCont.isArrived)
+        if (_ghost.isArrived)
         {
             standTime -= Time.deltaTime;
             if (standTime <= 0)
             {
-                _ghostCont.MoveTo(patrolingRoom.patrolPoints[
-                            UnityEngine.Random.Range(0, patrolingRoom.patrolPoints.Length)].position);
+                _ghost.MoveTo(_ghost.favoriteRoom.patrolPoints[
+                            UnityEngine.Random.Range(0, _ghost.favoriteRoom.patrolPoints.Length)].position);
                 standTime = resetStT;
             }
         }

@@ -1,8 +1,10 @@
+using UnityEngine;
+[CreateAssetMenu(fileName = "EMPasset", menuName = "Evidence/EMP")]
 public class EMPSignal : Evidence
 {
     public override void Init()
     {
-        GhostControler.onAction.AddListener(SetMaxSignal);
+        ActionController.onAction.AddListener(SetMaxSignal);
     }
 
     private void SetMaxSignal(EMPSignalSource signalArea)

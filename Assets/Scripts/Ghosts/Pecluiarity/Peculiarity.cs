@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class Peculiarity : MonoBehaviour
+public abstract class Peculiarity : ScriptableObject
 {
-    public void Init() { }
+    public abstract void Init();
 }

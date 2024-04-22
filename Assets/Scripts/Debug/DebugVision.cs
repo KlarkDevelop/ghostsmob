@@ -1,12 +1,12 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(GhostControler))]
-public class DebugGhostControler : Editor
+[CustomEditor(typeof(Vision))]
+public class DebugVision : Editor
 {
     private void OnSceneGUI()
     {
-        GhostControler fov = (GhostControler)target;
+        Vision fov = (Vision)target;
         if (fov.showVisionGizmos)
         {
             Handles.color = Color.white;
@@ -25,12 +25,6 @@ public class DebugGhostControler : Editor
                 Handles.color = Color.green;
                 Handles.DrawLine(startViewPoint, fov.nearestTarget.transform.position);
             }
-        }
-
-        if (fov.showActionGizmos)
-        {
-            Handles.color = Color.white;
-            Handles.DrawWireArc(fov.transform.position, Vector3.up, Vector3.forward, 360, fov._ghostPropereties.actionRange);
         }
     }
 

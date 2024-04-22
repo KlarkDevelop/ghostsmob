@@ -19,7 +19,7 @@ MonoBehaviour:
   inCompanyFactor: 0
   electricObjectFactor: 0
   playersObjectFactor: 0
-  tempSpeed: 1.3
+  tempSpeed: 1.2
   minTempInCurrentRoom: 10
   minTempInFavoriteRoom: 4
   actionsDelay: 30000

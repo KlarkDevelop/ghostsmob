@@ -3,25 +3,31 @@ using System;
 public class HuntState : iGhostState
 {
     public static event Action onStart;
-    public GhostControler _ghostCont { get; set; }
-    public void Init(GhostControler ghost)
+    public Ghost _ghost { get; set; }
+
+    public void Init(Ghost ghost)
     {
-        _ghostCont = ghost;
+        _ghost = ghost;
         onStart?.Invoke();
-        _ghostCont.RandomMove();
+        _ghost.RandomMove();
     }
 
     public void Run()
     {
-        if (_ghostCont.nearestTarget != null)
+        Hunt();
+    }
+
+    private void Hunt()
+    {
+        if (_ghost._vision.nearestTarget != null)
         {
-            _ghostCont.MoveTo(_ghostCont.nearestTarget.transform.position); //TODO: запоминание последней видимой точки игрока
+            _ghost.MoveTo(_ghost._vision.nearestTarget.transform.position);
         }
         else
         {
-            if (_ghostCont.isArrived)
+            if (_ghost.isArrived)
             {
-                _ghostCont.RandomMove();
+                _ghost.RandomMove();
             }
         }
     }

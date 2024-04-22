@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PlayersManager : MonoBehaviour
 {
-    public List<PlayerControler> players = new List<PlayerControler>();
+    public List<Player> players = new List<Player>();
 
     static public PlayersManager Singleton { get; set; }
 
@@ -12,7 +12,7 @@ public class PlayersManager : MonoBehaviour
         Singleton = this;
     }
 
-    public void AddPlayer(PlayerControler player)
+    public void AddPlayer(Player player)
     {
         if (players.Count == 0)
         {
@@ -25,7 +25,7 @@ public class PlayersManager : MonoBehaviour
         players.Add(player);
     }
 
-    public void RemovePlayer(PlayerControler player)
+    public void RemovePlayer(Player player)
     {
         players.Remove(player);
     }

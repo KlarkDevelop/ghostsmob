@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3439138761990323037}
-  - component: {fileID: 4086679085766971215}
   - component: {fileID: 8284530373360180030}
+  - component: {fileID: 4086679085766971215}
   - component: {fileID: 8692398817533757913}
   - component: {fileID: 7349249926296175733}
   m_Layer: 7
@@ -27,6 +27,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 300490839760198596}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -36,36 +37,7 @@ Transform:
   - {fileID: 6007762889462118328}
   - {fileID: 3783731450216241375}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4086679085766971215
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 300490839760198596}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33e476f5cb09f9848ab00820e0007db3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animator: {fileID: 6007762889471891544}
-  inGameId: 0
-  currentRoom: {fileID: 0}
-  aimDistance: 5
-  dropForce: 5
-  maxInventoryItems: 3
-  itemsPositionPoint: {fileID: 4898359166272140530}
-  speed: 5
-  pl_Camera: {fileID: 459750058239687381}
-  sensitivity: 140
-  g: -9.81
-  groundChaker: {fileID: 3688386479650081230}
-  chkerDistance: 0.4
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 8
 --- !u!114 &8284530373360180030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,7 +50,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
+  GlobalObjectIdHash: 3232444734
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -86,6 +58,35 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &4086679085766971215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 300490839760198596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33e476f5cb09f9848ab00820e0007db3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  madness: 0
+  _animator: {fileID: 6007762889471891544}
+  inGameId: 0
+  currentRoom: {fileID: 0}
+  aimDistance: 5
+  dropForce: 5
+  maxInventoryItems: 3
+  itemsPositionPoint: {fileID: 4898359166272140530}
+  moveSpeed: 10
+  pl_Camera: {fileID: 459750058239687381}
+  sensitivity: 140
+  g: -9.81
+  groundChecker: {fileID: 0}
+  checkerDistance: 0.4
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!143 &8692398817533757913
 CharacterController:
   m_ObjectHideFlags: 0
@@ -168,6 +169,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1223903806827019480}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.758, z: 0.008}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -175,7 +177,6 @@ Transform:
   m_Children:
   - {fileID: 4898359166272140530}
   m_Father: {fileID: 3439138761990323037}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &459750058239687381
 Camera:
@@ -303,13 +304,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4264706524212318403}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1.076, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3439138761990323037}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5082919203682532302
 GameObject:
@@ -334,13 +335,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5082919203682532302}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.137, y: -0.125, z: 0.54399997}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3783731450216241375}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &6007762889462508856
 PrefabInstance:

@@ -1,6 +1,6 @@
 public interface iGhostState
 {
-    public GhostControler _ghostCont { get; set; }
-    public void Init(GhostControler ghost);
+    public Ghost _ghost { get; set; }
+    public void Init(Ghost ghost);
     public void Run();
 }

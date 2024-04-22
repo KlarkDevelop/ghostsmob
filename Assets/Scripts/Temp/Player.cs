@@ -2,8 +2,9 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
 using System.Collections.Generic;
-public class PlayerControler : NetworkBehaviour
+public class Player : NetworkBehaviour
 {
+    [Range(0, 1)] public float madness;
     [SerializeField] private Animator _animator;
     private CharacterController _characterControler;
     public int inGameId;
@@ -41,9 +42,6 @@ public class PlayerControler : NetworkBehaviour
 
     private IEnumerator LoadPlayer()
     {
-        // pl_Camera = Camera.main;
-        // pl_Camera.transform.parent = transform;
-        // pl_Camera.transform.localPosition = new Vector3(0, 0.74f, 0);
         transform.position = new Vector3(0, 1f, 0); //TODO: delete this lines
         screenCenter = new Vector3(Screen.width / 2, Screen.height / 2, 0);
         interactableObjectsMaskId = LayerMask.NameToLayer("interactableObject");
@@ -158,13 +156,13 @@ public class PlayerControler : NetworkBehaviour
         return objInFocus;
     }
 
-    public float speed = 10f;
+    public float moveSpeed = 10f;
     private Vector3 movingV;
     private void Move()
     {
         float x = Input.GetAxis("Horizontal");
         float y = Input.GetAxis("Vertical");
-        movingV = (transform.right * x + transform.forward * y) * speed * Time.deltaTime;
+        movingV = (transform.right * x + transform.forward * y) * moveSpeed * Time.deltaTime;
 
         _characterControler.Move(movingV);
         _animator.SetFloat("Speed", movingV.magnitude);
@@ -201,13 +199,18 @@ public class PlayerControler : NetworkBehaviour
         _characterControler.Move(fallVel);
     }
 
-    [SerializeField] private Transform groundChaker;
-    [SerializeField] private float chkerDistance = 0.4f;
+    [SerializeField] private Transform groundChecker;
+    [SerializeField] private float checkerDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
     private bool isGrounded;
     private void ChekGround()
     {
-        isGrounded = Physics.CheckSphere(groundChaker.position, chkerDistance, groundMask);
+        isGrounded = Physics.CheckSphere(groundChecker.position, checkerDistance, groundMask);
+    }
+
+    public void InfluenceOnMandes(float goal, float speed)
+    {
+        madness = Mathf.MoveTowards(madness, goal, GameManager.settings.madnessSpeed * speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter(Collider other)
